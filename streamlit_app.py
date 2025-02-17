@@ -1,5 +1,6 @@
 import streamlit as st
 from sql_utils import generate_sql, execute_sql  # Import functions
+TOGETHER_AI_API_KEY = st.secrets["TOGETHER_AI_API_KEY"]
 
 
 # Streamlit UI
