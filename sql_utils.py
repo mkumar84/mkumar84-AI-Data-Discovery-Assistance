@@ -22,8 +22,8 @@ def map_columns(sql_query):
             print(f"🔄 Replacing '{incorrect}' with '{correct}'")  # Debugging print
             sql_query = sql_query.replace(incorrect, correct)
 
-    # ✅ Convert **ALL** string comparisons to case-insensitive (`ILIKE`)
-    sql_query = re.sub(r"(\w+)\s*=\s*'([^']*)'", r"\1 ILIKE '\2'", sql_query)
+    # ✅ Convert **ALL** `policy_status = 'value'` conditions to `policy_status ILIKE 'value'`
+    sql_query = re.sub(r"policy_status\s*=\s*'([^']*)'", r"policy_status ILIKE '\1'", sql_query)
 
     return sql_query
     
