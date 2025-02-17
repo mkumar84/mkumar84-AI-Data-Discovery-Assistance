@@ -4,7 +4,7 @@ TOGETHER_AI_API_KEY = st.secrets["TOGETHER_AI_API_KEY"]
 
 # 🎨 **Insurance Industry Theme**
 st.set_page_config(
-    page_title="Insurance Data Query Assistant",
+    page_title="AI-Powered Insurance Data Query Assistant",
     page_icon="💼",
     layout="wide",
 )
@@ -14,8 +14,6 @@ st.markdown(
     """
     <style>
         .stButton>button {
-            background-color: #1e3a8a !important;
-            color: white !important;
             font-size: 16px !important;
             font-weight: bold;
             border-radius: 8px !important;
@@ -23,14 +21,31 @@ st.markdown(
             margin: 5px;
             transition: 0.3s ease-in-out;
         }
-        .stButton>button:hover {
+        /* Insights Button */
+        .insights-button > button {
+            background-color: #1e3a8a !important;
+            color: white !important;
+        }
+        .insights-button > button:hover {
             background-color: #153063 !important;
         }
+        /* Reset Button */
+        .reset-button > button {
+            background-color: #dc3545 !important;
+            color: white !important;
+        }
+        .reset-button > button:hover {
+            background-color: #b02a37 !important;
+        }
+        /* Sample Queries */
         .sample-container {
             background-color: #f1f5f9;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
+        }
+        .sample-queries {
+            font-size: 14px !important;
         }
     </style>
     """,
@@ -61,8 +76,8 @@ if "query_input" not in st.session_state:
 
 user_input = st.text_input("🔍 Ask a question about insurance data:", st.session_state.query_input)
 
-# 📌 **Sample Prompts**
-st.markdown("#### 📌 Try these sample queries:")
+# 📌 **Sample Prompts with Auto-Submission**
+st.markdown("#### 📌 Try these sample queries:", unsafe_allow_html=True)
 sample_queries = [
     "How many policies are currently active?",
     "What is the total premium amount for all active policies?",
@@ -74,36 +89,51 @@ col1, col2 = st.columns(2)
 for i, query in enumerate(sample_queries):
     if col1.button(query, key=f"query_{i}"):
         st.session_state.query_input = query  # Store selected query
-        st.rerun()  # ✅ Refresh UI to auto-fill
+        st.session_state.auto_submit = True  # Flag for auto-submission
+        st.rerun()  # ✅ Refresh UI to auto-fill and auto-submit
+
+# 🚀 **Check for Auto-Submission**
+if st.session_state.get("auto_submit", False):
+    user_input = st.session_state.query_input  # Auto-fill input box
+    del st.session_state.auto_submit  # Remove auto-submit flag
+    auto_submit_triggered = True  # Flag to execute query
+
+else:
+    auto_submit_triggered = False
+
+# 📌 **Buttons Layout**
+col_left, col_right = st.columns([1, 1])
+
+# 🔄 **Reset Button**
+with col_left:
+    if st.button("🔄 Reset Query", key="reset", help="Clear the query and start fresh", use_container_width=True):
+        st.session_state.query_input = ""  # Clear the input field
+        st.rerun()  # Refresh UI
 
 # 🚀 **Submit Button**
-if st.button("📊 Get Insights"):
-    if user_input:
-        st.session_state.query_input = user_input  # Save input for re-use
-        with st.spinner("⏳ Generating SQL query..."):
-            sql_query = generate_sql(user_input)
-        
-        st.markdown(f"📝 **Generated SQL Query:** `{sql_query}`")
+with col_right:
+    if st.button("📊 Get Insights", key="submit", help="Generate and execute SQL query", use_container_width=True) or auto_submit_triggered:
+        if user_input:
+            st.session_state.query_input = user_input  # Save input for re-use
+            with st.spinner("⏳ Generating SQL query..."):
+                sql_query = generate_sql(user_input)
+            
+            st.markdown(f"📝 **Generated SQL Query:** `{sql_query}`")
 
-        if sql_query.strip().lower().startswith("select"):
-            with st.spinner("⏳ Fetching data..."):
-                df = execute_sql(sql_query)
+            if sql_query.strip().lower().startswith("select"):
+                with st.spinner("⏳ Fetching data..."):
+                    df = execute_sql(sql_query)
 
-            if isinstance(df, str):
-                st.error(df)  # Show SQL error messages
+                if isinstance(df, str):
+                    st.error(df)  # Show SQL error messages
+                else:
+                    st.success("✅ Data retrieved successfully!")
+                    st.markdown("### 📌 **Query Results**")
+                    st.dataframe(df)
             else:
-                st.success("✅ Data retrieved successfully!")
-                st.markdown("### 📌 **Query Results**")
-                st.dataframe(df)
+                st.error("⚠️ Generated SQL query is invalid. Please check your input.")
         else:
-            st.error("⚠️ Generated SQL query is invalid. Please check your input.")
-    else:
-        st.warning("⚠️ Please enter a query before submitting.")
-
-# 🔄 **Reset Button to Clear Query**
-if st.button("🔄 Reset Query"):
-    st.session_state.query_input = ""  # Clear the input field
-    st.rerun()  # Refresh UI
+            st.warning("⚠️ Please enter a query before submitting.")
 
 # 📌 Footer
 st.markdown("---")
