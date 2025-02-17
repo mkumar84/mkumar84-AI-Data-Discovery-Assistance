@@ -22,8 +22,8 @@ def map_columns(sql_query):
             print(f"🔄 Replacing '{incorrect}' with '{correct}'")  # Debugging print
             sql_query = sql_query.replace(incorrect, correct)
 
-    # ✅ Convert **ALL** `policy_status = 'value'` conditions to `policy_status ILIKE 'value'`
-    sql_query = re.sub(r"policy_status\s*=\s*'([^']*)'", r"policy_status ILIKE '\1'", sql_query)
+# ✅ Convert **ALL** `policy_status ILIKE 'value'` conditions to `LOWER(policy_status) = 'value'`
+    sql_query = re.sub(r"policy_status\s*ILIKE\s*'%?([^']*)%?'", r"LOWER(policy_status) = LOWER('\1')", sql_query)
 
     return sql_query
     
@@ -104,10 +104,6 @@ def generate_sql(user_query):
     print("📝 **Final SQL Query After Fix:**", sql_query)  # Debugging print
 
     return sql_query
-
-import psycopg2
-import pandas as pd
-import streamlit as st
 
 def execute_sql(query):
     """ Connect to the Render PostgreSQL database and execute queries """
