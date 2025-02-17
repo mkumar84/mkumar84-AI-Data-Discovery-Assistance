@@ -13,65 +13,24 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-        /* Full-Width Page */
-        .block-container {
-            padding: 2rem;
-        }
-
-        /* Customizing Input Box */
-        .stTextInput>div>div>input {
-            font-size: 18px !important;
-            padding: 12px !important;
-            border-radius: 10px !important;
-            border: 2px solid #1e3a8a !important;
-            background-color: #f9fafb !important;
-        }
-
-        /* Enhancing Submit Button */
         .stButton>button {
             background-color: #1e3a8a !important;
             color: white !important;
-            font-size: 18px !important;
+            font-size: 16px !important;
             font-weight: bold;
             border-radius: 8px !important;
-            padding: 12px 20px !important;
+            padding: 8px 16px !important;
+            margin: 5px;
             transition: 0.3s ease-in-out;
         }
         .stButton>button:hover {
             background-color: #153063 !important;
         }
-
-        /* Table & Results Styling */
-        .stDataFrame {
-            background-color: white !important;
-            border-radius: 10px !important;
-        }
-
-        /* Header & Text */
-        .stMarkdown {
-            font-size: 18px !important;
-            color: #1e293b !important;
-        }
-
-        /* Sidebar */
-        .stSidebar {
-            background-color: #f1f5f9 !important;
-            padding: 1rem !important;
-        }
-
-        /* Title */
-        .title {
-            font-size: 36px !important;
-            font-weight: bold;
-            color: #1e3a8a !important;
-        }
-
-        /* Footer */
-        .footer {
-            font-size: 14px !important;
-            text-align: center;
-            color: #4b5563 !important;
-            margin-top: 20px;
+        .sample-container {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
         }
     </style>
     """,
@@ -97,6 +56,28 @@ st.sidebar.info("💡 **Tip:** Use **simple, direct questions** for better resul
 # 📝 **User Query Input**
 st.markdown("### ✨ Enter Your Query")
 user_input = st.text_input("🔍 Ask a question about insurance data:", "")
+
+# 📌 **Sample Prompts**
+st.markdown("#### 📌 Try these sample queries:")
+sample_queries = [
+    "How many policies are currently active?",
+    "What is the total premium amount for all active policies?",
+    "How many active policies does each customer have?",
+    "List all customers with upcoming renewals.",
+]
+
+# Store clicked query
+selected_query = st.session_state.get("selected_query", "")
+
+col1, col2 = st.columns(2)
+for i, query in enumerate(sample_queries):
+    if col1.button(query, key=f"query_{i}"):
+        st.session_state.selected_query = query  # Store selected query
+        st.experimental_rerun()  # Rerun the app to auto-fill and submit
+
+if "selected_query" in st.session_state and st.session_state.selected_query:
+    user_input = st.session_state.selected_query  # Auto-fill input box
+    del st.session_state.selected_query  # Reset selected query after use
 
 # 🚀 **Submit Button**
 if st.button("📊 Get Insights"):
