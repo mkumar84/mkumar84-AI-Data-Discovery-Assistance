@@ -44,6 +44,10 @@ def clean_sql_output(sql_query):
     # ✅ Remove markdown formatting
     sql_query = sql_query.replace("```sql", "").replace("```", "").strip()
 
+    # ✅ Extract only the first SQL query if multiple exist
+    sql_query = sql_query.split("User Query:")[0].strip()  # Remove additional AI-generated user queries
+    sql_query = sql_query.split("\n\n")[0].strip()  # Keep only the first valid query
+
     return sql_query
 
 def generate_sql(user_query):
@@ -100,11 +104,11 @@ def generate_sql(user_query):
     # ✅ Remove markdown formatting (```sql ... ```)
     sql_query = sql_query.replace("```sql", "").replace("```", "").strip()
 
-    # ✅ Map incorrect column names to actual column names
-    sql_query = map_columns(sql_query)
-
     # ✅ Clean up the SQL output
     sql_query = clean_sql_output(sql_query)
+
+    # ✅ Map incorrect column names to actual column names
+    sql_query = map_columns(sql_query)
 
     print("📝 **Final SQL Query After Fix:**", sql_query)  # Debugging print
 
