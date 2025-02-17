@@ -1,0 +1,3 @@
+__pycache__/
+*.pyc
+config.toml  # Ensure API keys are not pushed to GitHub
