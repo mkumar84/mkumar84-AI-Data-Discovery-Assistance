@@ -70,6 +70,9 @@ def generate_sql(user_query):
         "ONLY include `policy_end_date IS NULL` if explicitly asked for policies with NO end date."
         "Do NOT include `policy_end_date IS NULL` unless the user explicitly asks for 'policies with no end date'.\n"
         "ALWAYS use fully qualified column names (e.g., `customer.customer_id` instead of `customer_id`).\n"
+         "To find policies expiring within the next 30 days, use:\n"
+        "`policy_end_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days'`\n"
+        "DO NOT use `DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '30 days'` as it gives incorrect results.\n"
     )
 
     data = {
@@ -83,6 +86,9 @@ def generate_sql(user_query):
             "Do NOT include `policy_end_date IS NULL` unless specifically requested.\n"
             "ALWAYS use fully qualified column names (e.g., `customer.customer_id` instead of `customer_id`).\n"
             "Do NOT include explanations, comments, or markdown formatting (` ``` `).\n\n"
+            "To find policies expiring within the next 30 days, use:\n"
+            "`policy_end_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days'`\n"
+            "DO NOT use `DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '30 days'` as it gives incorrect results.\n"
             f"User Query: {user_query}\n\n"
         ),
         "max_tokens": 250
