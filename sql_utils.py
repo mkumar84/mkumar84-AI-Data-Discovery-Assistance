@@ -63,7 +63,9 @@ def generate_sql(user_query):
         "- **claims** (claim_id, policy_id, claim_amount, claim_status, claim_date)\n"
         "- **payments** (payment_id, policy_id, payment_amount, payment_date)\n\n"
         "Use ONLY the column names listed above. Do NOT make up new columns.\n"
-        "If a condition requires `customer_age`, always JOIN `policy` and `customer` using `customer.customer_id = policy.customer_id`."
+        "If a condition requires `customer_age`, always JOIN `policy` and `customer` using `customer.customer_id = policy.customer_id`.\n"
+        "Ensure `policy_status` uses case-insensitive filtering (`ILIKE`).\n"
+        "ONLY include `policy_end_date IS NULL` if explicitly asked for policies with NO end date."
     )
 
     data = {
