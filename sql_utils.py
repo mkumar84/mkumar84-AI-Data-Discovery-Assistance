@@ -22,7 +22,7 @@ def map_columns(sql_query):
             print(f"🔄 Replacing '{incorrect}' with '{correct}'")  # Debugging print
             sql_query = sql_query.replace(incorrect, correct)
 
- ✅ Fix incorrect pattern `LOWER(policy_status) = LOWER('active%')`
+    # ✅ Fix incorrect pattern `LOWER(policy_status) = LOWER('active%')`
     sql_query = re.sub(r"LOWER\(policy_status\)\s*=\s*LOWER\('([^']*)%'\)", r"LOWER(policy_status) = '\1'", sql_query)
     return sql_query
     
