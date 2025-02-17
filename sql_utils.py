@@ -22,8 +22,8 @@ def map_columns(sql_query):
             print(f"🔄 Replacing '{incorrect}' with '{correct}'")  # Debugging print
             sql_query = sql_query.replace(incorrect, correct)
 
-    # ✅ Trim extra spaces before comparing policy_status
-    sql_query = re.sub(r"policy_status\s*ILIKE\s*'([^']*)'", r"TRIM(policy_status) ILIKE '\1'", sql_query)
+    # ✅ Fix incorrect pattern `policy.TRIM(policy_status) ILIKE`
+    sql_query = re.sub(r"policy\.TRIM\(([^)]+)\)", r"TRIM(\1)", sql_query)
     return sql_query
     
     # ✅ Extra Fix: Ensure incorrect hallucinated column names are corrected
@@ -66,8 +66,7 @@ def generate_sql(user_query):
         "- **payments** (payment_id, policy_id, payment_amount, payment_date)\n\n"
         "Use ONLY the column names listed above. Do NOT make up new columns.\n"
         "If a condition requires `customer_age`, always JOIN `policy` and `customer` using `customer.customer_id = policy.customer_id`.\n"
-        "Ensure `policy_status` uses case-insensitive filtering (`ILIKE`).\n"
-        "Ensure `policy_status` uses `ILIKE` for case-insensitive filtering.\n"
+        "STRICT RULES: Ensure `policy_status` uses `ILIKE 'active'` for case-insensitivity.\n"
         "ONLY include `policy_end_date IS NULL` if explicitly asked for policies with NO end date."
         "Do NOT include `policy_end_date IS NULL` unless the user explicitly asks for 'policies with no end date'.\n"
         "ALWAYS use fully qualified column names (e.g., `customer.customer_id` instead of `customer_id`).\n"
