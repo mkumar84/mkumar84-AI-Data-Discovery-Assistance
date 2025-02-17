@@ -103,15 +103,19 @@ def generate_sql(user_query):
 
     return sql_query
 
+import psycopg2
+import pandas as pd
+import streamlit as st
+
 def execute_sql(query):
-    """ Connects to PostgreSQL database and executes the generated SQL query """
+    """ Connect to the Render PostgreSQL database and execute queries """
     try:
         conn = psycopg2.connect(
-        dbname="DemoDB",
-        user="postgres",
-        password="m7ahe9s8",
-        host="localhost",
-        port="5432"
+            dbname=st.secrets["PG_DB"],
+            user=st.secrets["PG_USER"],
+            password=st.secrets["PG_PASSWORD"],
+            host=st.secrets["PG_HOST"],
+            port=st.secrets["PG_PORT"]
         )
         cursor = conn.cursor()
         cursor.execute(query)
