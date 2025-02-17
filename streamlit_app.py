@@ -55,7 +55,11 @@ st.sidebar.info("💡 **Tip:** Use **simple, direct questions** for better resul
 
 # 📝 **User Query Input**
 st.markdown("### ✨ Enter Your Query")
-user_input = st.text_input("🔍 Ask a question about insurance data:", "")
+
+if "query_input" not in st.session_state:
+    st.session_state.query_input = ""
+
+user_input = st.text_input("🔍 Ask a question about insurance data:", st.session_state.query_input)
 
 # 📌 **Sample Prompts**
 st.markdown("#### 📌 Try these sample queries:")
@@ -66,22 +70,16 @@ sample_queries = [
     "List all customers with upcoming renewals.",
 ]
 
-# Store clicked query
-selected_query = st.session_state.get("selected_query", "")
-
 col1, col2 = st.columns(2)
 for i, query in enumerate(sample_queries):
     if col1.button(query, key=f"query_{i}"):
-        st.session_state.selected_query = query  # Store selected query
-        st.experimental_rerun()  # Rerun the app to auto-fill and submit
-
-if "selected_query" in st.session_state and st.session_state.selected_query:
-    user_input = st.session_state.selected_query  # Auto-fill input box
-    del st.session_state.selected_query  # Reset selected query after use
+        st.session_state.query_input = query  # Store selected query
+        st.rerun()  # ✅ Refresh UI to auto-fill
 
 # 🚀 **Submit Button**
 if st.button("📊 Get Insights"):
     if user_input:
+        st.session_state.query_input = user_input  # Save input for re-use
         with st.spinner("⏳ Generating SQL query..."):
             sql_query = generate_sql(user_input)
         
@@ -101,6 +99,11 @@ if st.button("📊 Get Insights"):
             st.error("⚠️ Generated SQL query is invalid. Please check your input.")
     else:
         st.warning("⚠️ Please enter a query before submitting.")
+
+# 🔄 **Reset Button to Clear Query**
+if st.button("🔄 Reset Query"):
+    st.session_state.query_input = ""  # Clear the input field
+    st.rerun()  # Refresh UI
 
 # 📌 Footer
 st.markdown("---")
