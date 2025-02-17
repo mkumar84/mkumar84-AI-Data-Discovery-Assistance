@@ -63,7 +63,10 @@ def generate_sql(user_query):
         "Use ONLY the column names listed above. Do NOT make up new columns.\n"
         "If a condition requires `customer_age`, always JOIN `policy` and `customer` using `customer.customer_id = policy.customer_id`.\n"
         "Ensure `policy_status` uses case-insensitive filtering (`ILIKE`).\n"
+        "Ensure `policy_status` uses `ILIKE` for case-insensitive filtering.\n"
         "ONLY include `policy_end_date IS NULL` if explicitly asked for policies with NO end date."
+        "Do NOT include `policy_end_date IS NULL` unless the user explicitly asks for 'policies with no end date'.\n"
+        "ALWAYS use fully qualified column names (e.g., `customer.customer_id` instead of `customer_id`).\n"
     )
 
     data = {
@@ -72,10 +75,14 @@ def generate_sql(user_query):
             "You are an expert SQL assistant for a PostgreSQL database.\n"
             f"{schema_info}\n"
             "Convert the following natural language request into a valid PostgreSQL SQL query.\n"
+            "STRICT RULES: Ensure `policy_status` uses `ILIKE 'active'` for case-insensitivity.\n"
+            "Always use `customer.customer_id`, `policy.policy_status`, `policy.policy_end_date`, etc.\n"
+            "Do NOT include `policy_end_date IS NULL` unless specifically requested.\n"
+            "ALWAYS use fully qualified column names (e.g., `customer.customer_id` instead of `customer_id`).\n"
             "Do NOT include explanations, comments, or markdown formatting (` ``` `).\n\n"
             f"User Query: {user_query}\n\n"
         ),
-        "max_tokens": 200
+        "max_tokens": 250
     }
     
     response = requests.post(url, json=data, headers=headers).json()
