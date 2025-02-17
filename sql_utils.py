@@ -22,9 +22,8 @@ def map_columns(sql_query):
             print(f"🔄 Replacing '{incorrect}' with '{correct}'")  # Debugging print
             sql_query = sql_query.replace(incorrect, correct)
 
-# ✅ Convert **ALL** `policy_status ILIKE 'value'` conditions to `LOWER(policy_status) = 'value'`
-    sql_query = re.sub(r"policy_status\s*ILIKE\s*'%?([^']*)%?'", r"LOWER(policy_status) = LOWER('\1')", sql_query)
-
+ ✅ Fix incorrect pattern `LOWER(policy_status) = LOWER('active%')`
+    sql_query = re.sub(r"LOWER\(policy_status\)\s*=\s*LOWER\('([^']*)%'\)", r"LOWER(policy_status) = '\1'", sql_query)
     return sql_query
     
     # ✅ Extra Fix: Ensure incorrect hallucinated column names are corrected
