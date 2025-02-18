@@ -128,16 +128,18 @@ with col_right:
                     st.error(df)  # Show SQL error messages
                 else:
                     st.success("✅ Data retrieved successfully!")
-                    st.markdown("### 📌 **Query Results**")
-                    col_full = st.columns([1])  # Create a full-width column layout
-                    # 🚀 Centering Query Results
-                    col_left_space, col_center, col_right_space = st.columns([1, 3, 1])
-                    with col_center:
-                        st.dataframe(df, use_container_width=True, height=500)  # Expand but stay centered
             else:
                 st.error("⚠️ Generated SQL query is invalid. Please check your input.")
         else:
             st.warning("⚠️ Please enter a query before submitting.")
+# 🚀 **Move Table Rendering OUTSIDE of Button Layout**
+if 'df' in locals() and not isinstance(df, str):
+    st.markdown("### 📌 **Query Results**")
+    
+    # **Center the Table Properly**
+    col_left_space, col_center, col_right_space = st.columns([1, 3, 1])
+    with col_center:
+        st.dataframe(df, use_container_width=True, height=min(500, len(df) * 35 + 50))  # Dynamically adjust height
 
 # 📌 Footer
 st.markdown("---")
