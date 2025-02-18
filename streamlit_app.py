@@ -129,7 +129,9 @@ with col_right:
                 else:
                     st.success("✅ Data retrieved successfully!")
                     st.markdown("### 📌 **Query Results**")
-                    st.dataframe(df)
+                    col_full = st.columns([1])  # Create a full-width column layout
+                    with col_full[0]:
+                        st.dataframe(df, use_container_width=True, height=500)  # Expand table view
             else:
                 st.error("⚠️ Generated SQL query is invalid. Please check your input.")
         else:
