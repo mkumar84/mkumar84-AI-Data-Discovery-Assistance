@@ -75,6 +75,8 @@ def generate_sql(user_query):
         "DO NOT use `DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '30 days'` as it gives incorrect results.\n"
         "Do NOT add `policy_end_date IS NULL` unless explicitly requested.\n"
         "ALWAYS use `GROUP BY` when aggregating values (e.g., `SUM(premium_amount) BY policy_type`).\n"
+        "DO NOT add unnecessary semicolons (`;`) before `GROUP BY` statements.\n"
+        "ALWAYS ensure correct aggregation when using `COUNT()` or `SUM()`.\n"
     )
 
     data = {
