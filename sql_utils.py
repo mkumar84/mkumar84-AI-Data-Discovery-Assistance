@@ -73,6 +73,8 @@ def generate_sql(user_query):
          "To find policies expiring within the next 30 days, use:\n"
         "`policy_end_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days'`\n"
         "DO NOT use `DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '30 days'` as it gives incorrect results.\n"
+        "Do NOT add `policy_end_date IS NULL` unless explicitly requested.\n"
+        "ALWAYS use `GROUP BY` when aggregating values (e.g., `SUM(premium_amount) BY policy_type`).\n"
     )
 
     data = {
