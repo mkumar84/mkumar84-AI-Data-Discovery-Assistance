@@ -146,22 +146,6 @@ if 'df' in locals() and not isinstance(df, str):
     with col_center:
         st.dataframe(df, use_container_width=True, height=min(500, len(df) * 35 + 50))  # Dynamically adjust height
 
-    # 🚀 **Dynamically Generate Pie/Donut Chart for Aggregation Queries**
-    if len(df.columns) == 2 and df.dtypes[1] in ["int64", "float64"]:
-        st.markdown("### 📊 **Visual Breakdown**")
-
-        # **Prepare the Chart Data**
-        labels = df[df.columns[0]]  # First column (Categories)
-        values = df[df.columns[1]]  # Second column (Counts/Amounts)
-
-        # **Generate the Pie Chart**
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.pie(values, labels=labels, autopct="%1.1f%%", startangle=90, wedgeprops={"edgecolor": "black"})
-        ax.set_title("Data Breakdown")
-
-        # **Display the Chart in Streamlit**
-        st.pyplot(fig)
-
 # 📌 Footer
 st.markdown("---")
 st.markdown("<p class='footer'>🚀 Built by Mahesh with ❤️ using Mistral 7-B Instruct(Hosted at TogetherAI)| Powered by AI & Streamlit | February 2025</p>", unsafe_allow_html=True)
