@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 from sql_utils import generate_sql, execute_sql  # Import functions
 TOGETHER_AI_API_KEY = st.secrets["TOGETHER_AI_API_KEY"]
 
@@ -83,6 +84,7 @@ sample_queries = [
     "What is the total premium amount for all active policies?",
     "How many active policies does each customer have?",
     "List all customers with upcoming renewals.",
+    "How many claims have been processed for each policy type?",
 ]
 
 col1, col2 = st.columns(2)
@@ -132,14 +134,33 @@ with col_right:
                 st.error("⚠️ Generated SQL query is invalid. Please check your input.")
         else:
             st.warning("⚠️ Please enter a query before submitting.")
+
+import matplotlib.pyplot as plt
+
 # 🚀 **Move Table Rendering OUTSIDE of Button Layout**
 if 'df' in locals() and not isinstance(df, str):
     st.markdown("### 📌 **Query Results**")
-    
+
     # **Center the Table Properly**
     col_left_space, col_center, col_right_space = st.columns([1, 3, 1])
     with col_center:
         st.dataframe(df, use_container_width=True, height=min(500, len(df) * 35 + 50))  # Dynamically adjust height
+
+    # 🚀 **Dynamically Generate Pie/Donut Chart for Aggregation Queries**
+    if len(df.columns) == 2 and df.dtypes[1] in ["int64", "float64"]:
+        st.markdown("### 📊 **Visual Breakdown**")
+
+        # **Prepare the Chart Data**
+        labels = df[df.columns[0]]  # First column (Categories)
+        values = df[df.columns[1]]  # Second column (Counts/Amounts)
+
+        # **Generate the Pie Chart**
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.pie(values, labels=labels, autopct="%1.1f%%", startangle=90, wedgeprops={"edgecolor": "black"})
+        ax.set_title("Data Breakdown")
+
+        # **Display the Chart in Streamlit**
+        st.pyplot(fig)
 
 # 📌 Footer
 st.markdown("---")
